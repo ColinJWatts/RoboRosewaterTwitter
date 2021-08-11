@@ -1,0 +1,11 @@
+To protect secrets .txt have been omitted from the git repo.
+To access your account create a file called "secrets.txt" in this directory with the below format:
+
+{
+    "CONSUMER_KEY": "PUT CONSUMER KEY HERE", 
+    "CONSUMER_SECRET": "PUT CONSUMER SECRET HERE", 
+    "ACCESS_KEY": "PUT ACCESS KEY HERE", 
+    "ACCESS_SECRET": "PUT ACCESS SECRET HERE"
+}
+
+Run "python RoborosewaterHost.py" to start the bot
