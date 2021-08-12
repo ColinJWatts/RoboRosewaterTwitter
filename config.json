@@ -1,3 +1,5 @@
 {
-    
+    "ImgSourceFilePath" : "D:\\PersonalProjects\\Roborosewater\\Managers\\imgs\\Source",
+    "ImgSinkFilePath" : "D:\\PersonalProjects\\Roborosewater\\Managers\\imgs\\Sink",
+    "SupportedFileTypes" : [".jpg", ".png"]
 }

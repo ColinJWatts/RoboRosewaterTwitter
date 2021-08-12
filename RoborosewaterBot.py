@@ -1,13 +1,19 @@
 import json
-from ApiManager import ApiManager
+from Managers.ApiManager import ApiManager
+from Managers.ImageManager import ImageManager
 
-def class RoborosewaterBot:
+class RoborosewaterBot:
 
     def __init__(self, api, configPath):
-        self.api = ApiManager(api)
         self.config = json.loads(open(configPath, 'r').read())
-
+        self.api = ApiManager(api)
+        self.imageManager = ImageManager(self.config)
+        
     def Start(self):
-        while(true):
-            # put scheduling logic here
-            return
+        self.SendRandomImageFromSource()
+
+    # NOTE: this isn't intended to be a final solution, just an example of how to use the managers
+    def SendRandomImageFromSource(self):
+        imgPath = self.imageManager.PullRandomImageFromSource()
+        filename = self.imageManager.GetFileNameFromPath(imgPath)
+        self.api.SendImageAsTweet(imgPath, filename)
