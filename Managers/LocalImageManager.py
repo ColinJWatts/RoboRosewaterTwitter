@@ -1,7 +1,7 @@
 import os
 import random
 
-class ImageManager:
+class LocalImageManager:
 
     def __init__(self, config):
         self.config = config
