@@ -1,6 +1,12 @@
 To protect secrets .txt have been omitted from the git repo.
-To access your account create a file called "secrets.txt" in this directory with the below format:
 
+All three apis used in this project require some kind of authentication. 
+To Use this bot you will be required to set up secret files of your own for each 
+of these interfaces. You will also be required to point the config file at each of them
+
+The format of each secret file is shown below:
+
+TWITTER:
 {
     "CONSUMER_KEY": "PUT CONSUMER KEY HERE", 
     "CONSUMER_SECRET": "PUT CONSUMER SECRET HERE", 
@@ -8,4 +14,23 @@ To access your account create a file called "secrets.txt" in this directory with
     "ACCESS_SECRET": "PUT ACCESS SECRET HERE"
 }
 
+GOOGLE DRIVE: (note this file can be downloaded directly from google's developer tools with no changes)
+{
+    "installed":
+    {
+        "client_id":"client id goes here",
+        "project_id":"your google developer project id",
+        "auth_uri":"https://accounts.google.com/o/oauth2/auth",
+        "token_uri":"https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret":"client secret goes here",
+        "redirect_uris":["urn:ietf:wg:oauth:2.0:oob","http://localhost"]
+    }
+}
+
+DISCORD:
+
+TOKEN (just your bot token with nothing else)
+
 Run "python RoborosewaterHost.py" to start the bot
+Run get_dependencies.ps1 with powershell to install needed python dependencies

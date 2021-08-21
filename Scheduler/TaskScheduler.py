@@ -6,8 +6,9 @@ from Scheduler.Task import Task
 from Scheduler.SendStatusToDiscordTask import SendStatusToDiscordTask 
 
 class TaskScheduler:
-    def __init__(self, config, imgManager, discordManager):
+    def __init__(self, config, twitterManager, imgManager, discordManager):
         self.config = config
+        self.twitterManager = twitterManager
         self.imageManager = imgManager
         self.discordManager = discordManager
         self.TaskList = []

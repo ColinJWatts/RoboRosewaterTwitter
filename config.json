@@ -1,4 +1,6 @@
 {
+    "TwitterSecretsPath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\twittersecrets.txt",
+
     "SupportedFileTypes" : [".jpg", ".png"],
 
     "DriveScopes" : ["https://www.googleapis.com/auth/drive"],
