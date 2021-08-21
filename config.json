@@ -2,9 +2,13 @@
     "SupportedFileTypes" : [".jpg", ".png"],
 
     "DriveScopes" : ["https://www.googleapis.com/auth/drive"],
-    "DriveSecretsFilePath" : "D:\\PersonalProjects\\Roborosewater\\DriveSecrets.txt",
-    "DriveImageCachePath" : "D:\\PersonalProjects\\Roborosewater\\Managers\\imgs\\DriveCache",
+    "DriveSecretsFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\DriveSecrets.txt",
+    "DriveImageCachePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\Managers\\imgs\\DriveCache",
     "SourceDriveFolder" : "1YPder4ydpWxPI2G19kRU6n4Tbu4jdVIR",
-    "SinkDriveFolder" : "1Dl27ff9NIrblqafRxEEK7AXz07dQE7ew"
+    "SinkDriveFolder" : "1Dl27ff9NIrblqafRxEEK7AXz07dQE7ew",
 
+    "TaskTryRunFreqSec" : 5,
+
+    "DiscordTokenFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\discordToken.txt",
+    "DiscordSetLogChannelCommand" : "!set_log_channel"
 }
