@@ -20,7 +20,8 @@ class DiscordManager:
 
     # To send a message we simply add it to the message queue
     # this queue will be cleared periodically by the client thread
-    def SendMessage(self, message):
+    def SendMessage(self, text, imageFilePath=None):
+        message = DiscordMessage(text, imageFilePath)
         self.messageQueue.put(message)
 
     def GetAllMessagesFromQueue(self):
@@ -28,3 +29,13 @@ class DiscordManager:
         while not self.messageQueue.empty():
             result.append(self.messageQueue.get())
         return result
+
+class DiscordMessage:
+    def __init__(self, text, imageFilePath = None):
+        self.text = text
+        self.imageFilePath = imageFilePath
+
+    def HasImage(self):
+        if self.imageFilePath is None:
+            return False
+        return True

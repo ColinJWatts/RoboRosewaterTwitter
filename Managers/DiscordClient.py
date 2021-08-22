@@ -30,7 +30,10 @@ class DiscordClient(discord.Client):
         else: 
             messages = self.manager.GetAllMessagesFromQueue()
             for m in messages:
-                await self.logChannel.send(m)
+                if m.HasImage():
+                    await self.logChannel.send(m.text, file=discord.File(m.imageFilePath))
+                else:
+                    await self.logChannel.send(m.text)
 
     @clear_message_queue.before_loop
     async def before_my_task(self):

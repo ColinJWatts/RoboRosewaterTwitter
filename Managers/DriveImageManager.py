@@ -63,6 +63,9 @@ class DriveImageManager:
     # returns a path to the downloaded image and the drive image info
     def DownloadRandomImage(self):
         imageInfo = self.GetListOfAllImageInfo()
+        if (len(imageInfo) == 0):
+            return None, None
+
         r = random.randrange(0, len(imageInfo))
 
         request = self.service.files().get_media(fileId=imageInfo[r]['id'])
@@ -81,6 +84,8 @@ class DriveImageManager:
     # returns the local filepath to the image
     def DownloadAndMoveRandomImage(self):
         localPath, driveImgInfo = self.DownloadRandomImage()
+        if (localPath is None):
+            return None
         
         self.service.files().delete(fileId=driveImgInfo['id']).execute()
 
