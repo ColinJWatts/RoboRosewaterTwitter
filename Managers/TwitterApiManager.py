@@ -17,3 +17,11 @@ class TwitterApiManager:
 
     def SendImageAsTweet(self, imgFilePath, text):
         self.api.update_with_media(imgFilePath, status=text)
+
+    def GetNumberOfFollowers(self):
+        myInfo = self.api.me()
+        c = tweepy.Cursor(self.api.followers, myInfo.id)
+        count = 0
+        for follower in c.items():
+            count += 1
+        return count

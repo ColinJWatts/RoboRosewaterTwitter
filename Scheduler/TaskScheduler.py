@@ -39,14 +39,14 @@ class TaskScheduler:
         #self.TaskList.append(Task(datetime.datetime.now(timezone.utc) + datetime.timedelta(seconds = 10), datetime.timedelta(seconds = 10), maxRuns=60))
         
         # set up a status reminder task
-        sendStatusStartTime = self.ESTtoUTC(datetime(2021, 8, 22, hour=12, minute=40))
-        sendStatusInterval = timedelta(minutes=5)
-        sendStatusTask = SendStatusToDiscordTask(self.imageManager, self.discordManager, sendStatusStartTime, sendStatusInterval)
+        sendStatusStartTime = self.ESTtoUTC(datetime(2021, 8, 24, hour=8, minute=30))
+        sendStatusInterval = timedelta(minutes=180)
+        sendStatusTask = SendStatusToDiscordTask(self.imageManager, self.discordManager, self.twitterManager, sendStatusStartTime, sendStatusInterval)
         self.TaskList.append(sendStatusTask)
 
         # set up a task to tweet images
-        tweetImageStartTime = self.ESTtoUTC(datetime(2021, 8, 22, hour=12, minute=41))
-        tweetImageInterval = timedelta(minutes=5)
+        tweetImageStartTime = self.ESTtoUTC(datetime(2021, 8, 24, hour=8, minute=30))
+        tweetImageInterval = timedelta(minutes=30)
         tweetImageTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, tweetImageStartTime, tweetImageInterval)
         self.TaskList.append(tweetImageTask)
 

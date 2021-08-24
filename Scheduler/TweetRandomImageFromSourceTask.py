@@ -17,7 +17,7 @@ class TweetRandomImageFromSourceTask(Task):
         fileName = self.imageManager.GetFileNameFromPath(localFilePath)
         
         try:
-        #    self.twitterManager.SendImageAsTweet(localFilePath, fileName)
+            self.twitterManager.SendImageAsTweet(localFilePath, fileName)
             self.discordManager.SendMessage(f"New card tweeted: {fileName}", localFilePath)
         except:
             self.discordManager.SendMessage(f"Failed to send tweet for card: {fileName}")
