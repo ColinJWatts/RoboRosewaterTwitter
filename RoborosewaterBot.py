@@ -13,10 +13,5 @@ class RoborosewaterBot:
         self.imageManager = DriveImageManager(self.config)
         self.scheduler = TaskScheduler(self.config, self.twitterManager, self.imageManager, self.discordManager)
         
-        
     def Start(self):
         self.scheduler.Run()
-        #self.SendRandomImageFromSource()
-
-    def SendRandomImageFromSource(self):
-        print(self.imageManager.DownloadAndMoveRandomImage())

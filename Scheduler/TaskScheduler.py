@@ -22,7 +22,7 @@ class TaskScheduler:
         while True:
             for task in self.TaskList:
                 try:
-                taskResponse = task.Run()
+                    taskResponse = task.Run()
                 except:
                     self.discordManager.SendMessage(f"Task failed with exception: {sys.exc_info()[0]}")
                     task.IncrementTime() # we make use of the increment function to avoid error spam
