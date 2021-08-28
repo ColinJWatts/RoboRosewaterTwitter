@@ -28,7 +28,7 @@ class TaskScheduler:
         self.imageManager = imgManager
         self.discordManager = discordManager
         self.TaskList = []
-        self.LoadDailySchedule()
+        self.LoadTaskSchedule()
 
     def Run(self):
         while True:
