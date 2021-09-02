@@ -9,7 +9,7 @@ def GetDiscordClientThread(manager,config):
     loop = asyncio.get_event_loop()
     client = DiscordClient(config, manager)
     token = open(config["DiscordTokenFilePath"], 'r').read()
-    loop.create_task(client.start(token))
+    loop.create_task(client.start(token, bot=config["IsDiscordBotAccount"]))
     return threading.Thread(target=loop.run_forever)
 
 class DiscordManager:

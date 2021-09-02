@@ -22,4 +22,4 @@ class TweetRandomImageFromSourceTask(Task):
             Logger.LogInfo(f"New card tweeted: {fileName}")
             self.discordManager.SendMessage(f"New card tweeted: {fileName}", localFilePath)
         except:
-            Logger.LogError(f"Failed to send tweet for card: {fileName}", self.discordManager)
+            Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)

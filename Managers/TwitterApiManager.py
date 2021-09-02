@@ -25,8 +25,4 @@ class TwitterApiManager:
 
     def GetNumberOfFollowers(self):
         myInfo = self.api.me()
-        c = tweepy.Cursor(self.api.followers, myInfo.id)
-        count = 0
-        for follower in c.items():
-            count += 1
-        return count
+        return myInfo.followers_count

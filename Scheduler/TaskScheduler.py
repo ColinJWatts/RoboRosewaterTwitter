@@ -39,7 +39,7 @@ class TaskScheduler:
                 try:
                     taskResponse = task.Run()
                 except:
-                    Logger.LogError(f"{task.__class__.__name__} failed with exception: {sys.exc_info()[0]}", self.discordManager)
+                    Logger.LogError(f"{task.__class__.__name__} failed with exception: {sys.exc_info()}", self.discordManager)
                     task.IncrementTime() # we make use of the increment function to avoid error spam
                     
             # Pause the thread until we try again
@@ -48,13 +48,13 @@ class TaskScheduler:
     def LoadDailySchedule(self):
         dayinterval = timedelta(days=1)
 
-        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=8, minute=38))
+        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=14, minute=0))
         sendStatusTask = SendStatusToDiscordTask(self.imageManager, self.discordManager, self.twitterManager, sendStatusTime, dayinterval)
         self.TaskList.append(sendStatusTask)
 
-        # NineAM = GetNextOccurenceOfESTTime(dt.time(hour=9, minute=0))
-        # tweetImage9AMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
-        # self.TaskList.append(tweetImage9AMTask)
+        NineAM = GetNextOccurenceOfESTTime(dt.time(hour=14, minute=0))
+        tweetImage9AMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
+        self.TaskList.append(tweetImage9AMTask)
 
         # Noon = GetNextOccurenceOfESTTime(dt.time(hour=12, minute=0))
         # tweetImageNoonTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)

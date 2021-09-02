@@ -81,7 +81,7 @@ class DriveImageManager:
         while done is False:
             status, done = downloader.next_chunk()
         img = Image.open(fileHandler)
-        path = f"{self.config['DriveImageCachePath']}\\{imageInfo[r]['name']}"
+        path = os.path.join(self.config['DriveImageCachePath'], imageInfo[r]['name'])
         img.save(path)
         return path, imageInfo[r]
 
