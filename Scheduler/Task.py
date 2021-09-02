@@ -2,6 +2,8 @@ import datetime
 from datetime import timedelta
 from datetime import timezone
 
+from Managers.Logger import Logger
+
 class Task:
     # Start Time must be a UTC DateTime (TODO: BUILD UTO TO EST CONVERSION UTILITY)
     # Interval is a timedelta
@@ -9,6 +11,7 @@ class Task:
     #   default is set to -1 which means that the task will never stop
     #   0 will never run, 1 will run once, etc
     def __init__(self, startTime, interval, maxRuns=-1):
+        Logger.LogInfo(f"{self.__class__.__name__} initially scheduled for {startTime} UTC")
         self.nextRunTime = startTime
         self.interval = interval
         self.maxRuns = maxRuns
@@ -22,6 +25,7 @@ class Task:
             self.nextRunTime = datetime.datetime.now(timezone.utc) + self.interval
         else:
             self.nextRunTime = possibleNextTime
+        Logger.LogInfo(f"{self.__class__.__name__} next run scheduled for {self.nextRunTime} UTC")
 
     # note: tasks may throw
     def Run(self):
@@ -30,11 +34,13 @@ class Task:
 
         # check if current time is past the next run time
         if (datetime.datetime.now(timezone.utc) > self.nextRunTime):
+            Logger.LogInfo(f"Trying to run task: {self.__class__.__name__}")
             self.DoTask() 
             # increment next run time by self.interval
             self.IncrementTime()
             if (self.maxRuns > 0):
                 self.maxRuns = self.maxRuns - 1
+                Logger.LogInfo(f"{self.__class__.__name__} has {self.maxRuns} more runs")
             return TaskResponses.GetTaskRunResponse()
         
         return TaskResponses.GetTaskNotRunResponse()

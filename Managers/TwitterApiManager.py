@@ -1,10 +1,12 @@
 import tweepy
 import json
+from Managers.Logger import Logger
 
 class TwitterApiManager:
 
     def __init__(self, config):
         self.config = config
+        Logger.LogInfo("Starting Twitter Manager")
         secretFile = open(self.config["TwitterSecretsPath"], "r")
         secrets = json.loads(secretFile.read())
 
@@ -13,9 +15,11 @@ class TwitterApiManager:
         self.api = tweepy.API(auth)
 
     def SendTweet(self, text):
+        Logger.LogInfo(f"Sending tweet with text: {text}")
         self.api.update_status(text)
 
     def SendImageAsTweet(self, imgFilePath, text):
+        Logger.LogInfo(f"Tweeting an image with text {text}")
         self.api.update_with_media(imgFilePath, status=text)
 
     def GetNumberOfFollowers(self):

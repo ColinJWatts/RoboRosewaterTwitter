@@ -5,6 +5,7 @@ from datetime import datetime
 from datetime import timezone
 from datetime import timedelta
 import time as t
+from Managers.Logger import Logger
 from Scheduler.Task import Task
 from Scheduler.SendStatusToDiscordTask import SendStatusToDiscordTask 
 from Scheduler.TweetRandomImageFromSourceTask import TweetRandomImageFromSourceTask
@@ -23,20 +24,22 @@ def GetNextOccurenceOfESTTime(time):
 
 class TaskScheduler:
     def __init__(self, config, twitterManager, imgManager, discordManager):
+        Logger.LogInfo("Initializing Task Scheduler")
         self.config = config
         self.twitterManager = twitterManager
         self.imageManager = imgManager
         self.discordManager = discordManager
         self.TaskList = []
-        self.LoadTaskSchedule()
+        self.LoadDailySchedule()
 
     def Run(self):
+        Logger.LogInfo("Beginning Task Loop")
         while True:
             for task in self.TaskList:
                 try:
                     taskResponse = task.Run()
                 except:
-                    self.discordManager.SendMessage(f"Task failed with exception: {sys.exc_info()[0]}")
+                    Logger.LogError(f"{task.__class__.__name__} failed with exception: {sys.exc_info()[0]}", self.discordManager)
                     task.IncrementTime() # we make use of the increment function to avoid error spam
                     
             # Pause the thread until we try again
@@ -45,21 +48,21 @@ class TaskScheduler:
     def LoadDailySchedule(self):
         dayinterval = timedelta(days=1)
 
-        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=10, minute=0))
+        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=8, minute=14))
         sendStatusTask = SendStatusToDiscordTask(self.imageManager, self.discordManager, self.twitterManager, sendStatusTime, dayinterval)
         self.TaskList.append(sendStatusTask)
 
-        NineAM = GetNextOccurenceOfESTTime(dt.time(hour=9, minute=0))
-        tweetImage9AMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
-        self.TaskList.append(tweetImage9AMTask)
+        # NineAM = GetNextOccurenceOfESTTime(dt.time(hour=9, minute=0))
+        # tweetImage9AMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
+        # self.TaskList.append(tweetImage9AMTask)
 
-        Noon = GetNextOccurenceOfESTTime(dt.time(hour=12, minute=0))
-        tweetImageNoonTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
-        self.TaskList.append(tweetImageNoonTask)
+        # Noon = GetNextOccurenceOfESTTime(dt.time(hour=12, minute=0))
+        # tweetImageNoonTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
+        # self.TaskList.append(tweetImageNoonTask)
 
-        ThreePM = GetNextOccurenceOfESTTime(dt.time(hour=15, minute=0))
-        tweetImage3PMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, ThreePM, dayinterval)
-        self.TaskList.append(tweetImage3PMTask)
+        # SixPM = GetNextOccurenceOfESTTime(dt.time(hour=18, minute=0))
+        # tweetImage6PMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, SixPM, dayinterval)
+        # self.TaskList.append(tweetImage6PMTask)
 
     def LoadTaskSchedule(self):
         # This is where we load in a schedule

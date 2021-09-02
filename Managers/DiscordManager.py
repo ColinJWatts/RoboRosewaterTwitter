@@ -1,6 +1,7 @@
 import discord
 import threading
 import asyncio
+from Managers.Logger import Logger
 from queue import Queue
 from Managers.DiscordClient import DiscordClient
 
@@ -14,6 +15,7 @@ class DiscordManager:
 
     def __init__(self, config):
         self.config = config
+        Logger.LogInfo("Starting Discord Manager")
         self.messageQueue = Queue()
         self.clientThread = threading.Thread(target=run_discord_client_thread, args=(self,config,))
         self.clientThread.start()

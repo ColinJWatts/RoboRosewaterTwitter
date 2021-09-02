@@ -1,4 +1,5 @@
 from Scheduler.Task import Task
+from Managers.Logger import Logger
 
 class TweetRandomImageFromSourceTask(Task): 
     def __init__(self, imageManager, discordManager, twitterManager, startTime, interval, maxRuns=-1): 
@@ -11,13 +12,14 @@ class TweetRandomImageFromSourceTask(Task):
     def DoTask(self):
         localFilePath = self.imageManager.DownloadAndMoveRandomImage()
         if (localFilePath is None):
-            self.discordManager.SendMessage("Tried to send tweet but could not find an image")
+            Logger.LogWarning("Tried to send tweet but could not find an image", self.discordManager)
             return
             
         fileName = self.imageManager.GetFileNameFromPath(localFilePath)
         
         try:
             self.twitterManager.SendImageAsTweet(localFilePath, fileName)
+            Logger.LogInfo(f"New card tweeted: {fileName}")
             self.discordManager.SendMessage(f"New card tweeted: {fileName}", localFilePath)
         except:
-            self.discordManager.SendMessage(f"Failed to send tweet for card: {fileName}")
+            Logger.LogError(f"Failed to send tweet for card: {fileName}", self.discordManager)

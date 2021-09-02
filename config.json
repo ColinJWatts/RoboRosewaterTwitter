@@ -10,7 +10,6 @@
     "SinkDriveFolder" : "1NfnpSxx_EzuKRcKxw_C7fcSwbyOOn_RK",
 
     "TaskTryRunFreqSec" : 5,
-    "EasterStandardTimeOffset" : -4,
 
     "DiscordTokenFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\discordToken.txt",
     "DiscordSetLogChannelCommand" : "!set_log_channel"
