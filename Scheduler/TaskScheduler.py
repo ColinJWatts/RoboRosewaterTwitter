@@ -48,21 +48,21 @@ class TaskScheduler:
     def LoadDailySchedule(self):
         dayinterval = timedelta(days=1)
 
-        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=14, minute=0))
+        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=15, minute=0))
         sendStatusTask = SendStatusToDiscordTask(self.imageManager, self.discordManager, self.twitterManager, sendStatusTime, dayinterval)
         self.TaskList.append(sendStatusTask)
 
-        NineAM = GetNextOccurenceOfESTTime(dt.time(hour=14, minute=0))
+        NineAM = GetNextOccurenceOfESTTime(dt.time(hour=9, minute=0))
         tweetImage9AMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
         self.TaskList.append(tweetImage9AMTask)
 
-        # Noon = GetNextOccurenceOfESTTime(dt.time(hour=12, minute=0))
-        # tweetImageNoonTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
-        # self.TaskList.append(tweetImageNoonTask)
+        Noon = GetNextOccurenceOfESTTime(dt.time(hour=12, minute=0))
+        tweetImageNoonTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
+        self.TaskList.append(tweetImageNoonTask)
 
-        # SixPM = GetNextOccurenceOfESTTime(dt.time(hour=18, minute=0))
-        # tweetImage6PMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, SixPM, dayinterval)
-        # self.TaskList.append(tweetImage6PMTask)
+        SixPM = GetNextOccurenceOfESTTime(dt.time(hour=18, minute=0))
+        tweetImage6PMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, SixPM, dayinterval)
+        self.TaskList.append(tweetImage6PMTask)
 
     def LoadTaskSchedule(self):
         # This is where we load in a schedule
