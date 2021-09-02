@@ -48,7 +48,7 @@ class TaskScheduler:
     def LoadDailySchedule(self):
         dayinterval = timedelta(days=1)
 
-        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=8, minute=14))
+        sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=8, minute=38))
         sendStatusTask = SendStatusToDiscordTask(self.imageManager, self.discordManager, self.twitterManager, sendStatusTime, dayinterval)
         self.TaskList.append(sendStatusTask)
 

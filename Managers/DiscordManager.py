@@ -5,11 +5,12 @@ from Managers.Logger import Logger
 from queue import Queue
 from Managers.DiscordClient import DiscordClient
 
-def run_discord_client_thread(manager,config):
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
+def GetDiscordClientThread(manager,config):
+    loop = asyncio.get_event_loop()
     client = DiscordClient(config, manager)
-    client.run(open(config["DiscordTokenFilePath"], 'r').read())
+    token = open(config["DiscordTokenFilePath"], 'r').read()
+    loop.create_task(client.start(token))
+    return threading.Thread(target=loop.run_forever)
 
 class DiscordManager:
 
@@ -17,7 +18,7 @@ class DiscordManager:
         self.config = config
         Logger.LogInfo("Starting Discord Manager")
         self.messageQueue = Queue()
-        self.clientThread = threading.Thread(target=run_discord_client_thread, args=(self,config,))
+        self.clientThread = GetDiscordClientThread(self, config)
         self.clientThread.start()
 
     # To send a message we simply add it to the message queue
