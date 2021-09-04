@@ -1,3 +1,5 @@
+import sys
+import time
 from Scheduler.Task import Task
 from Managers.Logger import Logger
 
@@ -18,8 +20,9 @@ class TweetRandomImageFromSourceTask(Task):
         fileName = self.imageManager.GetFileNameFromPath(localFilePath)
         
         try:
-            self.twitterManager.SendImageAsTweet(localFilePath, fileName)
+            status = self.twitterManager.SendImageAsTweet(localFilePath, fileName)
             Logger.LogInfo(f"New card tweeted: {fileName}")
             self.discordManager.SendMessage(f"New card tweeted: {fileName}", localFilePath)
+            #print(status.entities['url'])
         except:
             Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)

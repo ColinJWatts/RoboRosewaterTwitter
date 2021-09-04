@@ -1,17 +1,18 @@
 {
-    "TwitterSecretsPath" : "D:\\PersonalProjects\\Roborosewater\\secrets.txt",
+    "TwitterSecretsPath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\twittersecrets.txt",
 
     "SupportedFileTypes" : [".jpg", ".png"],
 
     "DriveScopes" : ["https://www.googleapis.com/auth/drive"],
-    "DriveSecretsFilePath" : "D:\\PersonalProjects\\Roborosewater\\DriveSecrets.txt",
-    "DriveImageCachePath" : "D:\\PersonalProjects\\Roborosewater\\Managers\\imgs\\DriveCache",
+    "DriveSecretsFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\DriveSecrets.txt",
+    "DriveImageCachePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\Managers\\imgs\\DriveCache",
     "SourceDriveFolder" : "1ec924orzRcHYAfuaoH-OUohe-pEqZ-Y8",
     "SinkDriveFolder" : "1NfnpSxx_EzuKRcKxw_C7fcSwbyOOn_RK",
 
     "TaskTryRunFreqSec" : 5,
 
-    "DiscordTokenFilePath" : "D:\\PersonalProjects\\Roborosewater\\discordToken.txt",
+    "DiscordTokenFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\discordToken.txt",
     "DiscordSetLogChannelCommand" : "!set_log_channel",
-    "IsDiscordBotAccount" : true
+    "IsDiscordBotAccount" : true,
+    "LogChannelCachePath" : "LogChannelCache.txt"
 }
