@@ -1,5 +1,6 @@
 {
     "TwitterSecretsPath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\twittersecrets.txt",
+    "TwitterStatusBaseUrl" : "https://twitter.com/LordOfLunch/status/",
 
     "SupportedFileTypes" : [".jpg", ".png"],
 

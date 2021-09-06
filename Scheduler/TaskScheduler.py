@@ -53,15 +53,15 @@ class TaskScheduler:
         self.TaskList.append(sendStatusTask)
 
         NineAM = GetNextOccurenceOfESTTime(dt.time(hour=9, minute=0))
-        tweetImage9AMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
+        tweetImage9AMTask = TweetRandomImageFromSourceTask(self.config, self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
         self.TaskList.append(tweetImage9AMTask)
 
         Noon = GetNextOccurenceOfESTTime(dt.time(hour=12, minute=0))
-        tweetImageNoonTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
+        tweetImageNoonTask = TweetRandomImageFromSourceTask(self.config, self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
         self.TaskList.append(tweetImageNoonTask)
 
         SixPM = GetNextOccurenceOfESTTime(dt.time(hour=18, minute=0))
-        tweetImage6PMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, SixPM, dayinterval)
+        tweetImage6PMTask = TweetRandomImageFromSourceTask(self.config, self.imageManager, self.discordManager, self.twitterManager, SixPM, dayinterval)
         self.TaskList.append(tweetImage6PMTask)
 
     def LoadTaskSchedule(self):
@@ -79,15 +79,15 @@ class TaskScheduler:
 
         # set up a task to tweet images
         NineAM = estTimeZone.localize(datetime(2021, 9, 1, hour=9))
-        tweetImage9AMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
+        tweetImage9AMTask = TweetRandomImageFromSourceTask(self.config, self.imageManager, self.discordManager, self.twitterManager, NineAM, dayinterval)
         self.TaskList.append(tweetImage9AMTask)
 
         Noon = estTimeZone.localize(datetime(2021, 9, 1, hour=12))
-        tweetImageNoonTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
+        tweetImageNoonTask = TweetRandomImageFromSourceTask(self.config, self.imageManager, self.discordManager, self.twitterManager, Noon, dayinterval)
         self.TaskList.append(tweetImageNoonTask)
 
         ThreePM = estTimeZone.localize(datetime(2021, 9, 1, hour=15))
-        tweetImage3PMTask = TweetRandomImageFromSourceTask(self.imageManager, self.discordManager, self.twitterManager, ThreePM, dayinterval)
+        tweetImage3PMTask = TweetRandomImageFromSourceTask(self.config, self.imageManager, self.discordManager, self.twitterManager, ThreePM, dayinterval)
         self.TaskList.append(tweetImage3PMTask)
 
 

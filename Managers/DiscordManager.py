@@ -10,7 +10,7 @@ def GetDiscordClientThread(manager,config):
     client = DiscordClient(config, manager)
     token = open(config["DiscordTokenFilePath"], 'r').read()
     loop.create_task(client.start(token, bot=config["IsDiscordBotAccount"]))
-    return threading.Thread(target=loop.run_forever)
+    return threading.Thread(target=loop.run_forever, daemon=True) #specifying this as a daemon thread makes for smoother shutdown
 
 class DiscordManager:
 
