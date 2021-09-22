@@ -10,12 +10,13 @@ def ReleaseLockAfterMinute():
     twitterLock.release()
 
 class TweetRandomImageFromSourceTask(Task): 
-    def __init__(self, config, imageManager, discordManager, twitterManager, startTime, interval, maxRuns=-1): 
+    def __init__(self, config, imageManager, discordManager, twitterManager, startTime, interval, maxRuns=-1, ExtraTweetText=""): 
         super().__init__(startTime, interval, maxRuns)
         self.config = config
         self.imageManager = imageManager
         self.discordManager = discordManager
         self.twitterManager = twitterManager
+        self.extraTweetText = ExtraTweetText
 
     def DoTask(self):
         if twitterLock.acquire(blocking=False):
@@ -29,7 +30,7 @@ class TweetRandomImageFromSourceTask(Task):
             fileName = self.imageManager.GetFileNameFromPath(localFilePath)
 
             try:
-                status = self.twitterManager.SendImageAsTweet(localFilePath, fileName)
+                status = self.twitterManager.SendImageAsTweet(localFilePath, f"{fileName} {self.extraTweetText}")
                 Logger.LogInfo(f"New card tweeted: {fileName}")
                 url = self.config["TwitterStatusBaseUrl"] + str(status.id)# f{status.id}"
 
