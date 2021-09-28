@@ -3,6 +3,7 @@ import random
 from PIL import Image
 import io
 import mimetypes
+import requests
 from Managers.Logger import Logger
 
 from googleapiclient.discovery import build
@@ -27,7 +28,6 @@ class DriveImageManager:
             creds = None
 
             if os.path.exists(TokenFileName):
-                Logger.LogInfo
                 Logger.LogInfo("Loading credentials from cache")
                 creds = Credentials.from_authorized_user_file(TokenFileName, Scopes)
 
@@ -48,12 +48,41 @@ class DriveImageManager:
             Logger.LogError(f"Fatal Error Authenticating Google Drive with Excpetion: {e}", alertService)
             raise Exception(e) 
 
-    def GetListOfAllImageInfo(self):
-        resource = self.service.files()
+    def RefreshCredentials(self):
+        Logger.LogInfo("Refreshing Credentials")
+        creds = Credentials.from_authorized_user_file(TokenFileName, self.config["DriveScopes"])
+        authorization_url = "https://oauth2.googleapis.com/token"
+        params = {
+                "grant_type": "refresh_token",
+                "client_id": creds.client_id,
+                "client_secret": creds.client_secret,
+                "refresh_token": creds.refresh_token
+        }
+
+        r = requests.post(authorization_url, data=params)
+        if r.ok:
+            creds.token = r.json()["access_token"]
+            self.service = build('drive', 'v3', credentials=creds)
+            with open(TokenFileName, 'w') as token:
+                    Logger.LogInfo("Cacheing credentials")
+                    token.write(creds.to_json())
+        else:
+            raise Exception("Credential Refresh Failed")
+
+    def GetListOfAllImageInfo(self, getFromSource=True):
+        try:
+            resource = self.service.files()
+        except:
+            self.RefreshCredentials()
+            resource = self.service.files()
         pageToken = None
         result = []
+        folder = self.config['SourceDriveFolder']
+        if not getFromSource:
+            folder = self.config['SinkDriveFolder']
+
         while True:
-            response = resource.list(q=f"'{self.config['SourceDriveFolder']}' in parents", pageSize=100, fields="nextPageToken, files(id, name)", pageToken=pageToken).execute()
+            response = resource.list(q=f"'{folder}' in parents", pageSize=100, fields="nextPageToken, files(id, name)", pageToken=pageToken).execute()
             result += response.get('files', [])
             pageToken = response.get('nextPageToken', None)
             if pageToken is None:
@@ -84,6 +113,18 @@ class DriveImageManager:
         path = os.path.join(self.config['DriveImageCachePath'], imageInfo[r]['name'])
         img.save(path)
         return path, imageInfo[r]
+
+    # this just returns the image
+    def DownloadCardById(self, id):
+        Logger.LogInfo(f"Downloading card with id: {id}")
+        request = self.service.files().get_media(fileId=id)
+        fileHandler = io.BytesIO()
+        downloader = MediaIoBaseDownload(fileHandler, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+        img = Image.open(fileHandler)
+        return img
 
     # This function uses the above function to download an image 
     # it then remove that image from the source drive folder and puts it into the sink
