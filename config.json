@@ -13,7 +13,13 @@
     "TaskTryRunFreqSec" : 5,
 
     "DiscordTokenFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\discordToken.txt",
-    "DiscordSetLogChannelCommand" : "!set_log_channel",
     "IsDiscordBotAccount" : true,
-    "LogChannelCachePath" : "LogChannelCache.txt"
+    "LogChannelCachePath" : "LogChannelCache.txt",
+
+    "DiscordSetLogChannelCommand" : "!set_log_channel",
+
+    "CommandCheckFreqSec" : 1,
+    "CommandPrefix" : "rrwm!",
+    "RestrictedCommandUserWhitelist" : [102919827156402176, 102181441340727296],
+    "MaxFuzzyMatchResponse" : 16
 }

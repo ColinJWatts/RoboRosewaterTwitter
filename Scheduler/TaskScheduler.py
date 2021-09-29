@@ -30,7 +30,7 @@ class TaskScheduler:
         self.imageManager = imgManager
         self.discordManager = discordManager
         self.TaskList = []
-        self.LoadDailySchedule()
+        #self.LoadDailySchedule()
 
     def Run(self):
         Logger.LogInfo("Beginning Task Loop")

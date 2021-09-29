@@ -4,6 +4,8 @@ from PIL import Image
 import io
 import mimetypes
 import requests
+import sys
+import json
 from Managers.Logger import Logger
 
 from googleapiclient.discovery import build
@@ -30,6 +32,7 @@ class DriveImageManager:
             if os.path.exists(TokenFileName):
                 Logger.LogInfo("Loading credentials from cache")
                 creds = Credentials.from_authorized_user_file(TokenFileName, Scopes)
+                creds.token = json.loads(open(TokenFileName, 'r').read())["token"]
 
             if not creds or not creds.valid:
                 if creds and creds.expired and creds.refresh_token:
@@ -68,6 +71,17 @@ class DriveImageManager:
                     token.write(creds.to_json())
         else:
             raise Exception("Credential Refresh Failed")
+
+    def PrintTokenInfo(self):
+        token = json.loads(open(TokenFileName, 'r').read())["token"]
+        print(token)
+        url = f"https://www.googleapis.com/oauth2/v3/tokeninfo?access_token={token}"
+        r = requests.get(url)
+        if r.ok:
+            print(r.json())
+        else:
+            print(sys.exc_info())
+
 
     def GetListOfAllImageInfo(self, getFromSource=True):
         try:

@@ -29,16 +29,17 @@ class DiscordClient(discord.Client):
 
 
     async def on_message(self, message):
-        # We may be able to pass commands thru here if we want
-        if (message.content == self.config["DiscordSetLogChannelCommand"]):
+        if (message.author.id in self.config["RestrictedCommandUserWhitelist"] and message.content == self.config["DiscordSetLogChannelCommand"]):
             Logger.LogInfo("Log Channel Set")
             self.logChannel = message.channel
             # cache log channel
             f = open(self.config["LogChannelCachePath"], 'w')
             f.write(f"{self.logChannel.id}")
             f.close()
+        elif message.content.startswith(self.config["CommandPrefix"]):
+            self.manager.commandQueue.put(message)
 
-    @tasks.loop(seconds=5) # Every 5 seconds we try to clear the message queue. can't add this to config with current setup :( 
+    @tasks.loop(seconds=1) # Every seconds we try to clear the message queue. can't add this to config with current setup :( 
     async def clear_message_queue(self):
         if (self.logChannel is None):
             if self.manager.messageQueue.qsize() > 0:
@@ -46,10 +47,13 @@ class DiscordClient(discord.Client):
         else: 
             messages = self.manager.GetAllMessagesFromQueue()
             for m in messages:
+                sendChannel = self.logChannel
+                if m.HasChannel():
+                    sendChannel = m.channel
                 if m.HasImage():
-                    await self.logChannel.send(m.text, file=discord.File(m.imageFilePath))
+                    await sendChannel.send(m.text, file=discord.File(m.imageFilePath))
                 else:
-                    await self.logChannel.send(m.text)
+                    await sendChannel.send(m.text)
 
     @clear_message_queue.before_loop
     async def before_my_task(self):
