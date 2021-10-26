@@ -51,7 +51,7 @@ class CommandManager:
     def GetCardFromSinkCommand(self, command):
         query = command.content[len(self.config["CommandPrefix"]):]
         toGet = query.lower()
-        cardInfos = self.imageManager.GetListOfAllImageInfo(getFromSource=False)
+        cardInfos = self.imageManager.GetListOfAllImageInfo(self.config["SinkDriveFolder"])
         cardInfo = None
         for c in cardInfos:
             if self.imageManager.GetFileNameFromPath(c["name"]).lower() == toGet:

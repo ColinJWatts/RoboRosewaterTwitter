@@ -49,7 +49,7 @@ class TaskScheduler:
         dayinterval = timedelta(days=1)
 
         sendStatusTime = GetNextOccurenceOfESTTime(dt.time(hour=15, minute=0))
-        sendStatusTask = SendStatusToDiscordTask(self.imageManager, self.discordManager, self.twitterManager, sendStatusTime, dayinterval)
+        sendStatusTask = SendStatusToDiscordTask(self.config, self.imageManager, self.discordManager, self.twitterManager, sendStatusTime, dayinterval)
         self.TaskList.append(sendStatusTask)
 
         NineAM = GetNextOccurenceOfESTTime(dt.time(hour=9, minute=0))

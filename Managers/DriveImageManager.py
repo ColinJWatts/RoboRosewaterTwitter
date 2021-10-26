@@ -158,7 +158,7 @@ class DriveImageManager:
             print(sys.exc_info())
 
 
-    def GetListOfAllImageInfo(self, getFromSource=True):
+    def GetListOfAllImageInfo(self, folder):
         try:
             resource = self.service.files()
         except:
@@ -166,9 +166,6 @@ class DriveImageManager:
             resource = self.service.files()
         pageToken = None
         result = []
-        folder = self.config['SourceDriveFolder']
-        if not getFromSource:
-            folder = self.config['SinkDriveFolder']
 
         while True:
             response = resource.list(q=f"'{folder}' in parents", pageSize=100, fields="nextPageToken, files(id, name)", pageToken=pageToken).execute()
@@ -184,8 +181,8 @@ class DriveImageManager:
 
     # Downloads a random image from drive and saves it in the local cache
     # returns a path to the downloaded image and the drive image info
-    def DownloadRandomImage(self):
-        imageInfo = self.GetListOfAllImageInfo()
+    def DownloadRandomImage(self, folder):
+        imageInfo = self.GetListOfAllImageInfo(folder)
         if (len(imageInfo) == 0):
             return None, None
 
@@ -218,17 +215,22 @@ class DriveImageManager:
     # This function uses the above function to download an image 
     # it then remove that image from the source drive folder and puts it into the sink
     # returns the local filepath to the image
-    def DownloadAndMoveRandomImage(self):
-        localPath, driveImgInfo = self.DownloadRandomImage()
+    def DownloadAndMoveRandomImage(self, folder, nonSinkFolderToMoveTo=None):
+        localPath, driveImgInfo = self.DownloadRandomImage(folder)
         if (localPath is None):
             return None
         
         Logger.LogInfo(f"Deleting image {driveImgInfo['name']} from Source")
         self.service.files().delete(fileId=driveImgInfo['id']).execute()
 
+        if nonSinkFolderToMoveTo is None:
+            dest = self.config["SinkDriveFolder"]
+        else:
+            dest = nonSinkFolderToMoveTo
+
         fileMetadata = {
             'name' : driveImgInfo['name'],
-            'parents' : [self.config["SinkDriveFolder"]]
+            'parents' : [dest]
         }
         Logger.LogInfo(f"Uploading image {driveImgInfo['name']} to Sink")
         media = MediaFileUpload(localPath, mimetype=mimetypes.guess_type(localPath)[0], resumable=True)

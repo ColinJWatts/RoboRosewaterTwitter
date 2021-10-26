@@ -3,11 +3,8 @@ import time
 import threading
 from Scheduler.Task import Task
 from Managers.Logger import Logger
+from Managers.TwitterApiManager import twitterLock
 
-twitterLock = threading.Lock()
-def ReleaseLockAfterMinute():
-    time.sleep(60)
-    twitterLock.release()
 
 class TweetRandomImageFromSourceTask(Task): 
     def __init__(self, config, imageManager, discordManager, twitterManager, startTime, interval, maxRuns=-1, ExtraTweetText=""): 
@@ -19,10 +16,12 @@ class TweetRandomImageFromSourceTask(Task):
         self.extraTweetText = ExtraTweetText
 
     def DoTask(self):
-        if twitterLock.acquire(blocking=False):
-            releaseTask = threading.Thread(target=ReleaseLockAfterMinute, daemon=True)
-            releaseTask.start()
-            localFilePath = self.imageManager.DownloadAndMoveRandomImage()
+        if not twitterLock.locked():
+            if self.config["PriorityDriveFolder"] != "" and len(self.imageManager.GetListOfAllImageInfo(self.config["PriorityDriveFolder"])) > 0:
+                folder = self.config["PriorityDriveFolder"]
+            else: 
+                folder = self.config["SourceDriveFolder"]
+            localFilePath = self.imageManager.DownloadAndMoveRandomImage(folder)
             if (localFilePath is None):
                 Logger.LogWarning("Tried to send tweet but could not find an image", self.discordManager)
                 return
@@ -31,11 +30,14 @@ class TweetRandomImageFromSourceTask(Task):
 
             try:
                 status = self.twitterManager.SendImageAsTweet(localFilePath, f"{fileName} {self.extraTweetText}")
+                if status is None:
+                    Logger.LogWarning(f"Failed to send image [{fileName}] due to rate limit", self.discordManager)
+                    return 
                 Logger.LogInfo(f"New card tweeted: {fileName}")
-                url = self.config["TwitterStatusBaseUrl"] + str(status.id)# f{status.id}"
+                url = self.config["TwitterStatusBaseUrl"] + str(status.id)
 
                 self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}")
             except:
                 Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)
         else: 
-            Logger.LogInfo("Twitter task blocked from sending tweet")
+            Logger.LogInfo("Twitter has already been locked, bailing on task")

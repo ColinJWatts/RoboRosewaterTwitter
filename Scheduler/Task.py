@@ -30,7 +30,7 @@ class Task:
     # note: tasks may throw
     def Run(self):
         if (self.maxRuns == 0):
-            return TaskResponses.GetTaskFinishedResponse()
+            return
 
         # check if current time is past the next run time
         if (datetime.datetime.now(timezone.utc) > self.nextRunTime):
@@ -41,23 +41,6 @@ class Task:
             if (self.maxRuns > 0):
                 self.maxRuns = self.maxRuns - 1
                 Logger.LogInfo(f"{self.__class__.__name__} has {self.maxRuns} more runs")
-            return TaskResponses.GetTaskRunResponse()
         
-        return TaskResponses.GetTaskNotRunResponse()
-
     def DoTask(self):
         print(f"Default task run at time: {datetime.datetime.now(timezone.utc)}")
-
-
-class TaskResponses:
-    @staticmethod
-    def GetTaskFinishedResponse():
-        return 0
-
-    @staticmethod
-    def GetTaskRunResponse():
-        return 1
-
-    @staticmethod
-    def GetTaskNotRunResponse():
-        return 2
