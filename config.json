@@ -10,6 +10,9 @@
     "SourceDriveFolder" : "1ec924orzRcHYAfuaoH-OUohe-pEqZ-Y8",
     "SinkDriveFolder" : "1NfnpSxx_EzuKRcKxw_C7fcSwbyOOn_RK",
 
+    "EmailCredentialsPath" :  "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\EmailSecrets.txt",
+    "MockUserAgentArg" : "--user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'",
+
     "TaskTryRunFreqSec" : 5,
 
     "DiscordTokenFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\discordToken.txt",

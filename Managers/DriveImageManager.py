@@ -7,9 +7,13 @@ import requests
 import sys
 import json
 from Managers.Logger import Logger
+from selenium.webdriver import Chrome
+from selenium.webdriver.chrome.options import Options
+import time
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
+from google_auth_oauthlib.flow import Flow
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from googleapiclient.http import MediaIoBaseDownload
@@ -35,13 +39,9 @@ class DriveImageManager:
                 creds.token = json.loads(open(TokenFileName, 'r').read())["token"]
 
             if not creds or not creds.valid:
-                if creds and creds.expired and creds.refresh_token:
-                    Logger.LogInfo("Requesting refresh of credentials")
-                    creds.refresh(Request())
-                else:
-                    Logger.LogInfo("Downloading Credentials")
-                    flow = InstalledAppFlow.from_client_secrets_file(self.config["DriveSecretsFilePath"], Scopes)
-                    creds = flow.run_local_server(port=0)
+                Logger.LogInfo("Downloading Credentials")
+                flow = InstalledAppFlow.from_client_secrets_file(self.config["DriveSecretsFilePath"], Scopes)
+                creds = flow.run_local_server(port=0)
                 with open(TokenFileName, 'w') as token:
                     Logger.LogInfo("Cacheing credentials")
                     token.write(creds.to_json())
@@ -51,7 +51,82 @@ class DriveImageManager:
             Logger.LogError(f"Fatal Error Authenticating Google Drive with Excpetion: {e}", alertService)
             raise Exception(e) 
 
+    def GetAuthCodeWithBrowserAutomation(self, url):
+        # first we set up the browser to hide the automation from Google
+        opts = Options()
+        # default screen size can be an indicator of a bot running chrome
+        opts.add_argument("start-maximized")
+        # mock a user agent to fool google
+        opts.add_argument(self.config["MockUserAgentArg"])
+        # disable a bunch of automation flags that can potentially give it away
+        opts.add_experimental_option("excludeSwitches", ["enable-automation"]) 
+        opts.add_argument("--disable-blink-features")
+        opts.add_argument('--disable-blink-features=AutomationControlled')
+        opts.add_experimental_option('useAutomationExtension', False)
+
+        # Make sure this is pointing to the hacked version of the chrome driver
+        browser = Chrome(options=opts)
+        # set it up so whenever a page is loaded we overwrite the get function for the webdriver flag
+        # if this returns anything other than undefined google will know we're using a driver 
+        browser.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+          "source": """
+            Object.defineProperty(navigator, 'webdriver', {
+              get: () => undefined
+            })
+          """
+        })
+
+        # load email credentials from secret file
+        secretFile = open(self.config["EmailCredentialsPath"], "r")
+        secrets = json.loads(secretFile.read())
+        
+        # Manual steps for authentication
+        browser.get(url)
+        time.sleep(1)
+        emailField = browser.find_element_by_id("identifierId")
+        emailField.send_keys(secrets["Email"])
+        time.sleep(1)
+        button = browser.find_element_by_id("identifierNext")
+        button.click()
+        time.sleep(1)
+        pwform = browser.find_element_by_name("password")
+        pwform.send_keys(secrets["Password"])
+        time.sleep(1)
+        button = browser.find_element_by_id("passwordNext")
+        button.click()
+        time.sleep(2)
+        buttons = browser.find_elements_by_xpath("//button")
+        for b in buttons:
+            if "Continue" in b.text:
+                b.click()
+                break
+        time.sleep(1)
+        buttons = browser.find_elements_by_xpath("//button")
+        for b in buttons:
+            if "Continue" in b.text:
+                b.click()
+                break
+        time.sleep(1)
+        textarea = browser.find_element_by_xpath("//textarea")
+        authCode = textarea.text
+        browser.close()
+        return authCode
+
     def RefreshCredentials(self):
+        if os.path.exists(TokenFileName):
+            os.remove(TokenFileName)
+
+        flow = Flow.from_client_secrets_file(self.config["DriveSecretsFilePath"], self.config["DriveScopes"], redirect_uri='urn:ietf:wg:oauth:2.0:oob')
+        auth_url, _ = flow.authorization_url(prompt='consent')
+        authCode = self.GetAuthCodeWithBrowserAutomation(auth_url)
+        flow.fetch_token(code=authCode)
+        creds = flow.credentials
+        self.service = build('drive', 'v3', credentials=creds)
+        with open(TokenFileName, 'w') as token:
+            Logger.LogInfo("Cacheing credentials")
+            token.write(creds.to_json())
+
+    def OldRefreshCredentials(self):
         Logger.LogInfo("Refreshing Credentials")
         creds = Credentials.from_authorized_user_file(TokenFileName, self.config["DriveScopes"])
         authorization_url = "https://oauth2.googleapis.com/token"
