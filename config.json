@@ -1,22 +1,23 @@
 {
-    "TwitterSecretsPath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\twittersecrets.txt",
+    "TwitterSecretsPath" : "C:\\Users\\colin\\Documents\\Projects\\RRWM\\RoboRosewaterTwitter\\twittersecrets.txt",
     "TwitterStatusBaseUrl" : "https://twitter.com/LordOfLunch/status/",
 
-    "SupportedFileTypes" : [".jpg", ".png"],
+    "SupportedFileTypes" : [".jpg", ".png", ".txt"],
 
     "DriveScopes" : ["https://www.googleapis.com/auth/drive"],
-    "DriveSecretsFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\DriveSecrets.txt",
-    "DriveImageCachePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\Managers\\imgs\\DriveCache",
+    "DriveSecretsFilePath" : "C:\\Users\\colin\\Documents\\Projects\\RRWM\\RoboRosewaterTwitter\\DriveSecrets.txt",
+    "DriveImageCachePath" : "C:\\Users\\colin\\Documents\\Projects\\RRWM\\RoboRosewaterTwitter\\Managers\\imgs",
     "SourceDriveFolder" : "1ec924orzRcHYAfuaoH-OUohe-pEqZ-Y8",
     "SinkDriveFolder" : "1NfnpSxx_EzuKRcKxw_C7fcSwbyOOn_RK",
     "PriorityDriveFolder" : "15iigwRaIvI-6MYUq4dmPtO9kscPB8s_2",
+    "TextDescriptionDriveFolder" : "1nWYCmLJsgpbM9YpN7e3FkpPLypEgWICS",
 
-    "EmailCredentialsPath" :  "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\EmailSecrets.txt",
+    "EmailCredentialsPath" :  "C:\\Users\\colin\\Documents\\Projects\\RRWM\\RoboRosewaterTwitter\\EmailSecrets.txt",
     "MockUserAgentArg" : "--user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'",
 
     "TaskTryRunFreqSec" : 5,
 
-    "DiscordTokenFilePath" : "C:\\Users\\colin\\Desktop\\Roborosewater\\RoboRosewaterTwitter\\discordToken.txt",
+    "DiscordTokenFilePath" : "C:\\Users\\colin\\Documents\\Projects\\RRWM\\RoboRosewaterTwitter\\discordToken.txt",
     "IsDiscordBotAccount" : true,
     "LogChannelCachePath" : "LogChannelCache.txt",
 

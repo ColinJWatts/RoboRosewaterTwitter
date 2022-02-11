@@ -9,6 +9,7 @@ from Managers.Logger import Logger
 from Scheduler.Task import Task
 from Scheduler.SendStatusToDiscordTask import SendStatusToDiscordTask 
 from Scheduler.TweetRandomImageFromSourceTask import TweetRandomImageFromSourceTask
+from Scheduler.SyncCacheTask import SyncCacheTask
 
 # note, incoming timezone is assumed to be "America/New_York"
 def GetNextOccurenceOfESTTime(time):
@@ -31,6 +32,8 @@ class TaskScheduler:
         self.discordManager = discordManager
         self.TaskList = []
         self.LoadDailySchedule()
+        # set up daily cache syncs at midnight
+        self.TaskList.append(SyncCacheTask(self.imageManager, GetNextOccurenceOfESTTime(dt.time(hour=0, minute=0))))
 
     def Run(self):
         Logger.LogInfo("Beginning Task Loop")

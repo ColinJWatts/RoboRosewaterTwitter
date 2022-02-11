@@ -10,11 +10,11 @@ class SendStatusToDiscordTask(Task):
 
     def DoTask(self):
         message = ""
-        imgInfos = self.imageManager.GetListOfAllImageInfo(self.config["SourceDriveFolder"])
+        imgInfos = self.imageManager.GetListOfSourceFiles()
         message += f"Number of images queued for tweeting: {len(imgInfos)}\n"
 
         if self.config["PriorityDriveFolder"] != "":
-            numPriority = len(self.imageManager.GetListOfAllImageInfo(self.config["PriorityDriveFolder"]))
+            numPriority = len(self.imageManager.GetListOfPriorityFiles())
             if numPriority > 0:
                 message += f"Number of images in priority queue: {numPriority}\n"
 

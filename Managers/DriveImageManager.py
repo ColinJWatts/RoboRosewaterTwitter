@@ -10,6 +10,7 @@ from Managers.Logger import Logger
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 import time
+import shutil
 
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -200,6 +201,20 @@ class DriveImageManager:
         img.save(path)
         return path, imageInfo[r]
 
+    def DownloadTextFileById(self, id, destination):
+        Logger.LogInfo(f"Downloading text file with id: {id}")
+        request = self.service.files().get_media(fileId=id)
+        fileHandler = io.BytesIO()
+        downloader = MediaIoBaseDownload(fileHandler, request)
+        done = False
+        while done is False:
+            status, done = downloader.next_chunk()
+        fileHandler.seek(0)
+
+        with open(destination, 'wb') as f:
+            shutil.copyfileobj(fileHandler, f)     
+
+
     # this just returns the image
     def DownloadCardById(self, id):
         Logger.LogInfo(f"Downloading card with id: {id}")
@@ -211,6 +226,19 @@ class DriveImageManager:
             status, done = downloader.next_chunk()
         img = Image.open(fileHandler)
         return img
+
+    def RemoveImageById(self, id):
+        Logger.LogInfo(f"Removing image from Drive with ID: {id}")
+        self.service.files().delete(fileId=id).execute()
+
+    def UploadImageToFolder(self, imgPath, folder):
+        Logger.LogInfo(f"Uploading image to Drive: {self.GetFileNameFromPath(imgPath)}")
+        fileMetadata = {
+            'name' : os.path.basename(imgPath),
+            'parents' : [folder]
+        }
+        media = MediaFileUpload(imgPath, mimetype=mimetypes.guess_type(imgPath)[0], resumable=True)
+        newImgId = self.service.files().create(body=fileMetadata, media_body=media, fields='id').execute()
 
     # This function uses the above function to download an image 
     # it then remove that image from the source drive folder and puts it into the sink

@@ -49,6 +49,10 @@ class TwitterApiManager:
             Logger.LogInfo("Tweet Blocked by timeout ")
             return None
 
+    def ReplyToTweet(self, text, tweetIdToReplyTo):
+        Logger.LogInfo(f"Replying to tweet with id {tweetIdToReplyTo}")
+        return self.api.update_status(status=text, in_reply_to_status_id=tweetIdToReplyTo, auto_populate_reply_metadata=True)
+
     def GetNumberOfFollowers(self):
         myInfo = self.api.me()
         return myInfo.followers_count
