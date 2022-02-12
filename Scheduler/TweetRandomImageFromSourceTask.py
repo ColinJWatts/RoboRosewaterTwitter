@@ -17,11 +17,7 @@ class TweetRandomImageFromSourceTask(Task):
 
     def DoTask(self):
         if not twitterLock.locked():
-            if self.config["PriorityDriveFolder"] != "" and len(self.imageManager.GetListOfAllImageInfo(self.config["PriorityDriveFolder"])) > 0:
-                folder = self.config["PriorityDriveFolder"]
-            else: 
-                folder = self.config["SourceDriveFolder"]
-            localFilePath = self.imageManager.DownloadAndMoveRandomImage(folder)
+            localFilePath = self.imageManager.GetAndMoveRandomImage()
             if (localFilePath is None):
                 Logger.LogWarning("Tried to send tweet but could not find an image", self.discordManager)
                 return
@@ -37,6 +33,10 @@ class TweetRandomImageFromSourceTask(Task):
                 url = self.config["TwitterStatusBaseUrl"] + str(status.id)
 
                 self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}")
+                textReply = self.imageManager.TryGetTextForImage(fileName)
+                if not textReply is None:
+                    time.sleep(30)
+                    self.twitterManager.ReplyToTweet(textReply, status.id)
             except:
                 Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)
         else: 

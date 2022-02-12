@@ -45,28 +45,39 @@ class CommandManager:
             time.sleep(self.config["CommandCheckFreqSec"])
     
     def DoCommand(self, command):
-        self.GetCardFromSinkCommand(command)
+        query = command.content[len(self.config["CommandPrefix"]):].strip()
+        if len(query) > 3 and query[:4] == "sync" and command.author.id in self.config["RestrictedCommandUserWhitelist"]:
+            self.SyncImageManager(command)
+        else:
+            self.GetCardFromSinkCommand(command)
+
+    def SyncImageManager(self, command):
+        try:
+            self.imageManager.SyncCache()
+            self.discordManager.SendMessage(f"Sync Finished", channel=command.channel)
+        except:
+            self.discordManager.SendMessage(f"Sync Failed with exception: {sys.exc_info()}", channel=command.channel)
 
     # Ideally this will be a seperate thing but for now I want to try it here
     def GetCardFromSinkCommand(self, command):
-        query = command.content[len(self.config["CommandPrefix"]):]
+        query = command.content[len(self.config["CommandPrefix"]):].strip()
         toGet = query.lower()
-        cardInfos = self.imageManager.GetListOfAllImageInfo(self.config["SinkDriveFolder"])
+        cardInfos = self.imageManager.GetListOfSinkFiles()
         cardInfo = None
         for c in cardInfos:
-            if self.imageManager.GetFileNameFromPath(c["name"]).lower() == toGet:
+            if self.imageManager.GetFileNameFromPath(c).lower() == toGet:
                 cardInfo = c
                 break
         
         if not cardInfo is None: 
-            img = self.imageManager.DownloadCardById(cardInfo["id"])
+            img = self.imageManager.GetFileFromSinkByName(cardInfo)
             path = os.path.join(self.config['DriveImageCachePath'], cardInfo['name'])
             img.save(path)
             self.discordManager.SendMessage(self.imageManager.GetFileNameFromPath(path), imageFilePath=path, channel=command.channel)
             return
         
         # if we get here, we don't have an exact match to a card and must fuzzy match
-        lowercaseNames = [self.imageManager.GetFileNameFromPath(c["name"]).lower() for c in cardInfos]
+        lowercaseNames = [self.imageManager.GetFileNameFromPath(c).lower() for c in cardInfos]
         maxLen = len(max(lowercaseNames, key=len))
         paddedNames = [nam.ljust(maxLen, 'A') for nam in lowercaseNames] # note: since all names are now lowercase 'A' is a character no name uses
         distances = []
@@ -79,16 +90,15 @@ class CommandManager:
         for name in paddedNames:
             dist = FindLevenshteinDistance(toGet, name)
             if dist < minDist:
-                minNames = [self.imageManager.GetFileNameFromPath(cardInfos[i]["name"])]
+                minNames = [self.imageManager.GetFileNameFromPath(cardInfos[i])]
                 minDist = dist
                 loc = i
             elif dist == minDist:
-                minNames.append(self.imageManager.GetFileNameFromPath(cardInfos[i]["name"]))
+                minNames.append(self.imageManager.GetFileNameFromPath(cardInfos[i]))
             i+=1
 
         if len(minNames) == 1:
-            img = self.imageManager.DownloadCardById(cardInfos[loc]["id"])
-            path = os.path.join(self.config['DriveImageCachePath'], cardInfos[loc]['name'])
+            path = os.path.join(self.imageManager.sinkCache, cardInfos[loc])
             self.discordManager.SendMessage(f"Could not find card {query}, best match is {minNames[0]}", imageFilePath=path, channel=command.channel)
         else:
             toSend = minNames
