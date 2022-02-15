@@ -85,7 +85,7 @@ class CachedDriveImageManager:
                     img.save(path)
                     time.sleep(.05) # doing this to rate limit downloads to 20/second max
             except: 
-                Logger.LogWarning(f"Downloading image ({imageInfo['name']}) from source failed")
+                Logger.LogError(f"Downloading image ({imageInfo['name']}) from source failed")
      
         for imageInfo in priorityDriveInfo:
             try:
@@ -95,7 +95,7 @@ class CachedDriveImageManager:
                     img.save(path)
                     time.sleep(.05)
             except: 
-                Logger.LogWarning(f"Downloading image ({imageInfo['name']}) from priority failed")
+                Logger.LogError(f"Downloading image ({imageInfo['name']}) from priority failed")
      
         for imageInfo in sinkDriveInfo:
             try: 
@@ -105,7 +105,7 @@ class CachedDriveImageManager:
                     img.save(path)
                     time.sleep(.05)
             except:
-                Logger.LogWarning(f"Downloading image ({imageInfo['name']}) from sink failed")
+                Logger.LogError(f"Downloading image ({imageInfo['name']}) from sink failed")
         
         for fileInfo in textDriveInfo:
             try:
@@ -114,7 +114,7 @@ class CachedDriveImageManager:
                     self.driveManager.DownloadTextFileById(fileInfo['id'], path)
                     time.sleep(.05)
             except:
-                Logger.LogWarning(f"Downloading text file ({fileInfo['name']}) failed")
+                Logger.LogError(f"Downloading text file ({fileInfo['name']}) failed")
 
         # Finally, remove any files from the local cache that are not in drive 
         toRemove = [] # we use this to ease logging
