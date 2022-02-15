@@ -78,31 +78,43 @@ class CachedDriveImageManager:
 
         # Then find anything that exists in the drive and not locally and download
         for imageInfo in sourceDriveInfo:
-            if not imageInfo['name'] in cachedSourceFileList:
-                img = self.driveManager.DownloadCardById(imageInfo['id'])
-                path = os.path.join(self.sourceCache, imageInfo['name'])
-                img.save(path)
-                time.sleep(.05) # doing this to rate limit downloads to 20/second max
+            try:
+                if not imageInfo['name'] in cachedSourceFileList:
+                    img = self.driveManager.DownloadCardById(imageInfo['id'])
+                    path = os.path.join(self.sourceCache, imageInfo['name'])
+                    img.save(path)
+                    time.sleep(.05) # doing this to rate limit downloads to 20/second max
+            except: 
+                Logger.LogWarning(f"Downloading image ({imageInfo['name']}) from source failed")
      
         for imageInfo in priorityDriveInfo:
-            if not imageInfo['name'] in cachedPriorityFileList:
-                img = self.driveManager.DownloadCardById(imageInfo['id'])
-                path = os.path.join(self.priorityCache, imageInfo['name'])
-                img.save(path)
-                time.sleep(.05)
+            try:
+                if not imageInfo['name'] in cachedPriorityFileList:
+                    img = self.driveManager.DownloadCardById(imageInfo['id'])
+                    path = os.path.join(self.priorityCache, imageInfo['name'])
+                    img.save(path)
+                    time.sleep(.05)
+            except: 
+                Logger.LogWarning(f"Downloading image ({imageInfo['name']}) from priority failed")
      
         for imageInfo in sinkDriveInfo:
-            if not imageInfo['name'] in cachedSinkFileList:
-                img = self.driveManager.DownloadCardById(imageInfo['id'])
-                path = os.path.join(self.sinkCache, imageInfo['name'])
-                img.save(path)
-                time.sleep(.05)
+            try: 
+                if not imageInfo['name'] in cachedSinkFileList:
+                    img = self.driveManager.DownloadCardById(imageInfo['id'])
+                    path = os.path.join(self.sinkCache, imageInfo['name'])
+                    img.save(path)
+                    time.sleep(.05)
+            except:
+                Logger.LogWarning(f"Downloading image ({imageInfo['name']}) from sink failed")
         
         for fileInfo in textDriveInfo:
-            if not fileInfo['name'] in cachedTextFileList:
-                path = os.path.join(self.textCache, fileInfo['name'])
-                self.driveManager.DownloadTextFileById(fileInfo['id'], path)
-                time.sleep(.05)
+            try:
+                if not fileInfo['name'] in cachedTextFileList:
+                    path = os.path.join(self.textCache, fileInfo['name'])
+                    self.driveManager.DownloadTextFileById(fileInfo['id'], path)
+                    time.sleep(.05)
+            except:
+                Logger.LogWarning(f"Downloading text file ({fileInfo['name']}) failed")
 
         # Finally, remove any files from the local cache that are not in drive 
         toRemove = [] # we use this to ease logging
