@@ -25,7 +25,11 @@ class TweetRandomImageFromSourceTask(Task):
             fileName = self.imageManager.GetFileNameFromPath(localFilePath)
 
             try:
-                status = self.twitterManager.SendImageAsTweet(localFilePath, f"{fileName} {self.extraTweetText}")
+                textReply = self.imageManager.TryGetTextForImage(fileName)
+                altText = ""
+                if not textReply is None:
+                    altText = textReply
+                status = self.twitterManager.SendImageAsTweet(localFilePath, f"{fileName} {self.extraTweetText}", altText=altText)
                 if status is None:
                     Logger.LogWarning(f"Failed to send image [{fileName}] due to rate limit", self.discordManager)
                     return 
@@ -33,10 +37,6 @@ class TweetRandomImageFromSourceTask(Task):
                 url = self.config["TwitterStatusBaseUrl"] + str(status.id)
 
                 self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}")
-                textReply = self.imageManager.TryGetTextForImage(fileName)
-                if not textReply is None:
-                    time.sleep(30)
-                    self.twitterManager.ReplyToTweet(textReply, status.id)
             except:
                 Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)
         else: 
