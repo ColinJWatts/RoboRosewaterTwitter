@@ -28,6 +28,8 @@ class TweetRandomImageFromSourceTask(Task):
                 textReply = self.imageManager.TryGetTextForImage(fileName)
                 altText = ""
                 if not textReply is None:
+                    if len(textReply) >= 1000:
+                        textReply = textReply[:999]
                     altText = textReply
                 status = self.twitterManager.SendImageAsTweet(localFilePath, f"{fileName} {self.extraTweetText}", altText=altText)
                 if status is None:
