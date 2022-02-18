@@ -38,12 +38,14 @@ class TwitterApiManager:
         Logger.LogInfo(f"Sending tweet with text, ignoring lock: {text}")
         return self.api.update_status(text)
 
-    def SendImageAsTweet(self, imgFilePath, text, blocking=False):
+    def SendImageAsTweet(self, imgFilePath, text, altText="", blocking=False):
         if twitterLock.acquire(blocking):
             releaseTask = threading.Thread(target=ReleaseLockAfterMinute, daemon=True)
             releaseTask.start()
             Logger.LogInfo(f"Tweeting an image with text {text}")
             media = self.api.media_upload(imgFilePath)
+            if altText != "":
+                self.api.create_media_metadata(media.media_id, altText)
             return self.api.update_status(status=text, media_ids=[media.media_id])
         else:
             Logger.LogInfo("Tweet Blocked by timeout ")
