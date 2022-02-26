@@ -44,6 +44,7 @@ class DiscordClient(discord.Client):
         return self.tweetChannel
 
     async def on_message(self, message):
+        print(message.content)
         if (message.author.id in self.config["RestrictedCommandUserWhitelist"] and message.content == self.config["DiscordSetLogChannelCommand"]):
             Logger.LogInfo("Log Channel Set")
             self.logChannel = message.channel
