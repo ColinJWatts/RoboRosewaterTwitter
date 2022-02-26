@@ -147,8 +147,12 @@ class CachedDriveImageManager:
 
     def TryGetTextForImage(self, imageName):
         textFiles = self.GetListOfTextFiles()
+        imageNameCompare = StripPunctuation(self.GetFileNameFromPath(imageName)).lower()
+
         for text in textFiles:
-            if self.GetFileNameFromPath(text) == self.GetFileNameFromPath(imageName):
+            textStringCompare = StripPunctuation(self.GetFileNameFromPath(text)).lower()
+            print(textStringCompare)
+            if textStringCompare == imageNameCompare:
                 return open(os.path.join(self.textCache, text), 'r').read()
         return None
     
@@ -206,3 +210,9 @@ class CachedDriveImageManager:
             return result
 
         return None
+
+def StripPunctuation(str):
+    punc = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
+    for p in punc: 
+        str = str.replace(p,'')
+    return str
