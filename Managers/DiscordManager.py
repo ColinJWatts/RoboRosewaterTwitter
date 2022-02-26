@@ -21,6 +21,10 @@ class DiscordManager:
         self.commandQueue = Queue()
         self.clientThread = GetDiscordClientThread(self, config)
         self.clientThread.start()
+        self.client = None
+
+    def SetClient(self, client):
+        self.client = client
 
     # To send a message we simply add it to the message queue
     # this queue will be cleared periodically by the client thread
@@ -39,6 +43,13 @@ class DiscordManager:
         while not self.commandQueue.empty():
             result.append(self.commandQueue.get())
         return result
+
+    def GetTweetChannel(self):
+        if self.client is None or self.client.GetTweetChannel() is None: 
+            Logger.LogWarning("Could not detect Tweet channel, please reset", self)
+            return None
+        else: 
+            return self.client.tweetChannel      
 
 class DiscordMessage:
     def __init__(self, text, imageFilePath = None, channel = None):

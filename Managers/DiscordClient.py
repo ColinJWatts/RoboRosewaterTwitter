@@ -9,13 +9,14 @@ class DiscordClient(discord.Client):
         super().__init__(*args, **kwargs)
         self.config = config
         self.manager = manager
-
         self.logChannel = None
+        self.tweetChannel = None
 
         # start the task to run in the background
         self.clear_message_queue.start()
 
     async def on_ready(self):
+        self.manager.SetClient(self)
         Logger.LogInfo(f'Logged in as {self.user} (ID: {self.user.id})')
         # try to load log channel from cache (if it exists)
         # note, this will try to cache PM channels and then fail to load them (only works for guild channels)
@@ -23,10 +24,24 @@ class DiscordClient(discord.Client):
             logChannelId = open(self.config["LogChannelCachePath"]).read()
             self.logChannel = self.get_channel(int(logChannelId))
             if not self.logChannel is None:
-                Logger.LogInfo(f'Log Channel ({self.logChannel.name}) loaded frocm cache')
+                Logger.LogInfo(f'Log Channel loaded from cache')
             else: 
                 Logger.LogInfo("Failed to load Log Channel from Cache, please reset")
+        else: 
+            Logger.LogInfo(f"Did not detect Log Channel, please set using {self.config['DiscordSetLogChannelCommand']}")
 
+        if os.path.isfile(self.config["TweetChannelCachePath"]):
+            tweetChannelId = open(self.config["TweetChannelCachePath"]).read()
+            self.tweetChannel = self.get_channel(int(tweetChannelId))
+            if not self.tweetChannel is None:
+                Logger.LogInfo(f'Tweet Channel loaded frocm cache')
+            else: 
+                Logger.LogInfo("Failed to load Tweet Channel from Cache, please reset")
+        else:
+            Logger.LogInfo(f"Did not detect Tweet Channel, please set using {self.config['DiscordSetTweetChannelCommand']}")
+
+    def GetTweetChannel(self):
+        return self.tweetChannel
 
     async def on_message(self, message):
         if (message.author.id in self.config["RestrictedCommandUserWhitelist"] and message.content == self.config["DiscordSetLogChannelCommand"]):
@@ -35,6 +50,13 @@ class DiscordClient(discord.Client):
             # cache log channel
             f = open(self.config["LogChannelCachePath"], 'w')
             f.write(f"{self.logChannel.id}")
+            f.close()
+        if (message.author.id in self.config["RestrictedCommandUserWhitelist"] and message.content == self.config["DiscordSetTweetChannelCommand"]):
+            Logger.LogInfo("Tweet Channel Set")
+            self.tweetChannel = message.channel
+            # cache log channel
+            f = open(self.config["TweetChannelCachePath"], 'w')
+            f.write(f"{self.tweetChannel.id}")
             f.close()
         elif message.content.startswith(self.config["CommandPrefix"]):
             self.manager.commandQueue.put(message)
