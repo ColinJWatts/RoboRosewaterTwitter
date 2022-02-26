@@ -10,7 +10,7 @@
     "SourceDriveFolder" : "1ec924orzRcHYAfuaoH-OUohe-pEqZ-Y8",
     "SinkDriveFolder" : "1NfnpSxx_EzuKRcKxw_C7fcSwbyOOn_RK",
     "PriorityDriveFolder" : "15iigwRaIvI-6MYUq4dmPtO9kscPB8s_2",
-    "TextDescriptionDriveFolder" : "1nWYCmLJsgpbM9YpN7e3FkpPLypEgWICS",
+    "TextDescriptionDriveFolder" : "1-PvB-e6j86AkzDjxfgudP7FAR-2d0aJ3",
 
     "EmailCredentialsPath" :  "C:\\Users\\colin\\Documents\\Projects\\RRWM\\RoboRosewaterTwitter\\EmailSecrets.txt",
     "MockUserAgentArg" : "--user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36'",
@@ -19,9 +19,11 @@
 
     "DiscordTokenFilePath" : "C:\\Users\\colin\\Documents\\Projects\\RRWM\\RoboRosewaterTwitter\\discordToken.txt",
     "IsDiscordBotAccount" : true,
+    "TweetChannelCachePath" : "TweetChannelCache.txt",
     "LogChannelCachePath" : "LogChannelCache.txt",
 
     "DiscordSetLogChannelCommand" : "!set_log_channel",
+    "DiscordSetTweetChannelCommand" : "!set_tweet_channel",
 
     "CommandCheckFreqSec" : 1,
     "CommandPrefix" : "rrwm!",

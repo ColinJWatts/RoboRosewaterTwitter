@@ -37,8 +37,11 @@ class TweetRandomImageFromSourceTask(Task):
                     return 
                 Logger.LogInfo(f"New card tweeted: {fileName}")
                 url = self.config["TwitterStatusBaseUrl"] + str(status.id)
-
-                self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}")
+                tweetChannel = self.discordManager.GetTweetChannel()
+                if not tweetChannel is None:
+                    self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}", channel=tweetChannel)
+                else: 
+                    self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}")
             except:
                 Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)
         else: 
