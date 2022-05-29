@@ -1,4 +1,3 @@
-from pyparsing import null_debug_action
 from Managers.DriveImageManager import DriveImageManager
 from Managers.Logger import Logger
 from PIL import Image
