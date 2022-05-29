@@ -146,14 +146,17 @@ class CachedDriveImageManager:
         return
 
     def TryGetTextForImage(self, imageName):
-        textFiles = self.GetListOfTextFiles()
-        imageNameCompare = StripPunctuation(self.GetFileNameFromPath(imageName)).lower()
+        try:
+            textFiles = self.GetListOfTextFiles()
+            imageNameCompare = StripPunctuation(self.GetFileNameFromPath(imageName)).lower()
 
-        for text in textFiles:
-            textStringCompare = StripPunctuation(self.GetFileNameFromPath(text)).lower()
-            if textStringCompare == imageNameCompare:
-                return open(os.path.join(self.textCache, text), 'r').read()
-        return None
+            for text in textFiles:
+                textStringCompare = StripPunctuation(self.GetFileNameFromPath(text)).lower()
+                if textStringCompare == imageNameCompare:
+                    with open(os.path.join(self.textCache, text), 'r', encoding="utf-8") as f:
+                        return f.read()
+        except:
+            return None
     
     def GetListOfSourceFiles(self):
         return [x for x in os.listdir(self.sourceCache) if any(filetype in x for filetype in self.config["SupportedFileTypes"])]
@@ -176,6 +179,57 @@ class CachedDriveImageManager:
             return None
         
         return Image.open(os.path.join(self.sinkCache, fileName))
+
+    def GetRandomImageFilePath(self):
+        cachedPriorityFileList = [x for x in os.listdir(self.priorityCache) if any(filetype in x for filetype in self.config["SupportedFileTypes"])]
+        cachedSourceFileList = [x for x in os.listdir(self.sourceCache) if any(filetype in x for filetype in self.config["SupportedFileTypes"])]
+        
+        imgPath = None # if no images are found we will return none
+
+        if len(cachedPriorityFileList) > 0:
+            r = random.randrange(0, len(cachedPriorityFileList))
+            imgName = cachedPriorityFileList[r]
+            imgPath = os.path.join(self.priorityCache, imgName)
+        elif len(cachedSourceFileList) > 0:
+            r = random.randrange(0, len(cachedSourceFileList))
+            imgName = cachedSourceFileList[r]
+            imgPath = os.path.join(self.sourceCache, imgName)
+
+        return imgPath
+
+    # returns the filepath of the image now in the sink
+    def MoveImageToSink(self, imgPath):
+        # first confirm that the file exists in the priority or source
+        if not os.path.exists(imgPath):
+            Logger.LogError(f"Attempted to move image {self.driveManager.GetFileNameFromPath(imgPath)} but could not find it")
+            return None
+
+        if not (self.sourceCache in imgPath or self.priorityCache in imgPath):
+            Logger.LogError(f"Attempted to move image {self.driveManager.GetFileNameFromPath(imgPath)} but it was not located in the priority or source cache")
+            return None
+        
+        newPath = ""
+        isPrior = False # We set this for the action log
+        if self.priorityCache in imgPath:
+            newPath = imgPath.replace(self.priorityCache, self.sinkCache)
+            isPrior = True
+        else: # we know it's in the sourceCache 
+            newPath = imgPath.replace(self.sourceCache, self.sinkCache)        
+
+        src = "Source"
+        s = "S"
+        if isPrior:
+            src = "Priority"
+            s = "P"
+        Logger.LogInfo(f"Moving image from {src} Cache to Sink Cache: {self.driveManager.GetFileNameFromPath(imgPath)}")
+
+        imgName = newPath.replace(self.sinkCache, "").replace("/","").replace("\\","")
+        f = open(ACTION_LOG, 'a')
+        f.write(f"{s}{imgName}\n")
+        f.close()
+        os.replace(imgPath, newPath)
+
+        return newPath
 
     def GetAndMoveRandomImage(self):
         # We ONLY move this locally

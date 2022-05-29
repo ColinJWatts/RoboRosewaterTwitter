@@ -17,7 +17,7 @@ class TweetRandomImageFromSourceTask(Task):
 
     def DoTask(self):
         if not twitterLock.locked():
-            localFilePath = self.imageManager.GetAndMoveRandomImage()
+            localFilePath = self.imageManager.GetRandomImageFilePath()
             if (localFilePath is None):
                 Logger.LogWarning("Tried to send tweet but could not find an image", self.discordManager)
                 return
@@ -42,6 +42,8 @@ class TweetRandomImageFromSourceTask(Task):
                     self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}", channel=tweetChannel)
                 else: 
                     self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}")
+                
+                self.imageManager.MoveImageToSink(localFilePath)
             except:
                 Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)
         else: 
