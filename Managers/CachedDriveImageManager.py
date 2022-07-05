@@ -154,7 +154,12 @@ class CachedDriveImageManager:
                 textStringCompare = StripPunctuation(self.GetFileNameFromPath(text)).lower()
                 if textStringCompare == imageNameCompare:
                     with open(os.path.join(self.textCache, text), 'r', encoding="utf-8") as f:
-                        return f.read()
+                        text = f.read().replace("\\n", "\n")
+                        lines = text.split("\n")
+                        newText = ""
+                        for line in lines:
+                            newText += f"{line.strip()}\n"
+                        return newText
         except:
             return None
     
