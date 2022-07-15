@@ -48,8 +48,8 @@ class CommandManager:
         query = command.content[len(self.config["CommandPrefix"]):].strip()
         if len(query) > 3 and query[:4] == "sync" and command.author.id in self.config["RestrictedCommandUserWhitelist"]:
             self.SyncImageManager(command)
-        else:
-            self.GetCardFromSinkCommand(command)
+        # else:
+        #     self.GetCardFromSinkCommand(command)
 
     def SyncImageManager(self, command):
         try:

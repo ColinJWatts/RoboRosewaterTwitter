@@ -32,18 +32,28 @@ class TweetRandomImageFromSourceTask(Task):
                         textReply = textReply[:999]
                     altText = textReply
                 status = self.twitterManager.SendImageAsTweet(localFilePath, f"{fileName} {self.extraTweetText}", altText=altText)
+                
                 if status is None:
                     Logger.LogWarning(f"Failed to send image [{fileName}] due to rate limit", self.discordManager)
                     return 
-                Logger.LogInfo(f"New card tweeted: {fileName}")
-                url = self.config["TwitterStatusBaseUrl"] + str(status.id)
-                tweetChannel = self.discordManager.GetTweetChannel()
-                if not tweetChannel is None:
-                    self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}", channel=tweetChannel)
-                else: 
-                    self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}")
                 
-                self.imageManager.MoveImageToSink(localFilePath)
+                Logger.LogInfo(f"New card tweeted: {fileName}")
+                
+                url = self.config["TwitterStatusBaseUrl"] + str(status.id)
+                
+                newPath = self.imageManager.MoveImageToSink(localFilePath)
+                tweetChannel = self.discordManager.GetTweetChannel()
+
+                path = None
+                if self.config["SuppressEmbed"]:
+                    # if we're suppressing the link embeddings in twitter we want to send the image to discord too
+                    path = newPath
+
+                if not tweetChannel is None:
+                    self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}", imageFilePath=path, channel=tweetChannel)
+                else: 
+                    self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}", imageFilePath=path)
+
             except:
                 Logger.LogError(f"Failed to send tweet for card: {fileName}\n  Failed with exception: {sys.exc_info()}", self.discordManager)
         else: 

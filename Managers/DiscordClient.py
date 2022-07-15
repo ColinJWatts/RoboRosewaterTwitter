@@ -1,5 +1,6 @@
 import os
 import discord
+from discord import MessageFlags
 
 from discord.ext import tasks
 from Managers.Logger import Logger
@@ -69,13 +70,18 @@ class DiscordClient(discord.Client):
         else: 
             messages = self.manager.GetAllMessagesFromQueue()
             for m in messages:
+                msg = None
                 sendChannel = self.logChannel
                 if m.HasChannel():
                     sendChannel = m.channel
                 if m.HasImage():
-                    await sendChannel.send(m.text, file=discord.File(m.imageFilePath))
+                    msg = await sendChannel.send(m.text, file=discord.File(m.imageFilePath))
                 else:
-                    await sendChannel.send(m.text)
+                    msg = await sendChannel.send(m.text)
+
+                if not msg is None and self.config["SuppressEmbed"]:
+                    await msg.edit(flags=MessageFlags.suppress_embeds.flag)
+
 
     @clear_message_queue.before_loop
     async def before_my_task(self):

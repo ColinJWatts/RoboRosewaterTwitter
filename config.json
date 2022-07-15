@@ -28,5 +28,7 @@
     "CommandCheckFreqSec" : 1,
     "CommandPrefix" : "rrwm!",
     "RestrictedCommandUserWhitelist" : [102919827156402176, 102181441340727296],
-    "MaxFuzzyMatchResponse" : 16
+    "MaxFuzzyMatchResponse" : 16,
+
+    "SuppressEmbed" : true
 }
