@@ -48,6 +48,7 @@ class TweetRandomImageFromSourceTask(Task):
                 if self.config["SuppressEmbed"]:
                     # if we're suppressing the link embeddings in twitter we want to send the image to discord too
                     path = newPath
+                    url = f"<{url}>"
 
                 if not tweetChannel is None:
                     self.discordManager.SendMessage(f"New card tweeted: {fileName}\n{url}", imageFilePath=path, channel=tweetChannel)
